@@ -1,10 +1,21 @@
+var inputDollar = process.argv[2];
+console.log(howManyBottles(inputDollar));
+
 function howManyBottles(dollars) {
     var bottlesBought = Math.floor(dollars / 2);
     var bottleData = {
         fullBottles: bottlesBought,
         emptyBottles: 0,
-        caps: 0
+        caps: 0,
+        enhancedBreakdown: {
+            totalBottles: 0,
+            totalEarnedThrough: {
+                emptyBottles: 0,
+                caps: 0
+            }
+        }
     };
+
     var totalBottles = bottlesBought;
     //run a while loop while full bottles >1 or empty bottles>2 or caps >4
     while (
@@ -15,7 +26,31 @@ function howManyBottles(dollars) {
         consume(bottleData);
         totalBottles += redeem(bottleData);
     }
-    return totalBottles;
+    bottleData["enhancedBreakdown"]["totalBottles"] = totalBottles;
+    console.log(
+        "TOTAL BOTTLES: " +
+            bottleData["enhancedBreakdown"]["totalBottles"] +
+            "\n" +
+            "REMAINING BOTTLES: " +
+            bottleData["emptyBottles"] +
+            "\n" +
+            "REMAINING CAPS: " +
+            bottleData["caps"] +
+            "\n" +
+            "TOTAL EARNED: " +
+            "\n" +
+            "    " +
+            "BOTTLES: " +
+            bottleData["enhancedBreakdown"]["totalEarnedThrough"][
+                "emptyBottles"
+            ] +
+            "\n" +
+            "    " +
+            "CAPS: " +
+            bottleData["enhancedBreakdown"]["totalEarnedThrough"]["caps"]
+    );
+
+    return bottleData;
 }
 
 function consume(bottleData) {
@@ -29,6 +64,9 @@ function redeem(bottleData) {
     if (bottleData["emptyBottles"] >= 2) {
         var redeemFromEmpty = 0;
         redeemFromEmpty += Math.floor(bottleData["emptyBottles"] / 2);
+        bottleData["enhancedBreakdown"]["totalEarnedThrough"][
+            "emptyBottles"
+        ] += redeemFromEmpty;
         redeemed += redeemFromEmpty;
         //calculates how many empty bottles were lost
         var bottlesLost = redeemFromEmpty * 2;
@@ -37,6 +75,9 @@ function redeem(bottleData) {
     if (bottleData["caps"] >= 4) {
         var redeemedFromCaps = 0;
         redeemedFromCaps += Math.floor(bottleData["caps"] / 4);
+        bottleData["enhancedBreakdown"]["totalEarnedThrough"][
+            "caps"
+        ] += redeemedFromCaps;
         redeemed += redeemedFromCaps;
         var capsLost = redeemedFromCaps * 4;
         bottleData["caps"] = bottleData["caps"] - capsLost;
